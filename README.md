@@ -90,9 +90,10 @@ print_r($response);
 - **Get traffic stats**:
 
   ```php
-  $api->write('/interface/monitor-traffic', false);
-  $api->write('=interface=ether1');
-  $api->write('=once=' . true);
+  $api->where('/interface/monitor-traffic', [
+    '?interface=' => 'ether1',
+    '?once=' => true
+  ]);
   ```
 
 ## 🛡️ Security
