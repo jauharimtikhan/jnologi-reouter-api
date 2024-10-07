@@ -1,0 +1,18 @@
+{
+    "name": "jauhar/router-api",
+    "description": "API For Mikorit Router",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Jnologi\\RouterApi\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "jauhar-imtikhan",
+            "email": "bangjoe.muns@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev"
+}
