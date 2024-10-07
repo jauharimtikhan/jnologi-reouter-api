@@ -55,7 +55,7 @@ Retrieve a list of all interfaces from the router with query parameter :
 <?php
 
 $response = $api->where('/interface/print', [
-    '?.name=' => 'ether1'
+    '?name' => 'ether1'
 ]);
 
 print_r($response);
@@ -91,8 +91,8 @@ print_r($response);
 
   ```php
   $api->where('/interface/monitor-traffic', [
-    '?interface=' => 'ether1',
-    '?once=' => true
+    '?interface' => 'ether1',
+    '?once' => true
   ]);
   ```
 
