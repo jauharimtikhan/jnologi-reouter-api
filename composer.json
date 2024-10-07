@@ -14,5 +14,6 @@
             "email": "bangjoe.muns@gmail.com"
         }
     ],
-    "minimum-stability": "dev"
+    "minimum-stability": "stable",
+    "version": "1.0"
 }
