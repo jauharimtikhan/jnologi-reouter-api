@@ -153,7 +153,7 @@ class Core{
             }
         }
             if($this->toJson === true){
-                return json_encode($parsed);
+                return json_encode($parsed, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE| JSON_PRETTY_PRINT);
             }else{
                 return empty($parsed) && $singleValue !== null ? $singleValue : $parsed;
             }
