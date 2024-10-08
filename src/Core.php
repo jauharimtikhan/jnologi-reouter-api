@@ -13,6 +13,7 @@ class Core{
     protected $port = 8728;
     protected $certless = false;
     protected $delay = 3;
+    protected $toJson = false;
    
     public function __construct(
         protected $ip,
@@ -151,8 +152,11 @@ class Core{
                 }
             }
         }
-        
-        return empty($parsed) && $singleValue !== null ? $singleValue : $parsed;
+            if($this->toJson === true){
+                return json_encode($parsed);
+            }else{
+                return empty($parsed) && $singleValue !== null ? $singleValue : $parsed;
+            }
     }
 
     protected function parseResponse4Smarty($response)
@@ -360,6 +364,11 @@ class Core{
         if($this->connected){
             return $this->comm($query, ["?.id" => $id]);
         }
+    }
+
+    public function toJson($status = true){
+        $this->toJson = $status;
+        return $this;
     }
    
 }
