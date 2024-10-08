@@ -339,6 +339,11 @@ class Core{
         $this->disconnected();
     }
 
+    public function setDebug($debug = false){
+        $this->debug = $debug;
+        return $this;
+    }
+
     public function query(string $query){
         if($this->connected){
            return $this->comm($query);
