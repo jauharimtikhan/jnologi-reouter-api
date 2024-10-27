@@ -1,7 +1,9 @@
-<?php 
+<?php
+
 namespace Jnologi\RouterApi;
 
-class Core{
+class Core
+{
     protected $debug = false;
     protected $connected = false;
     protected $timeout = 20;
@@ -14,31 +16,33 @@ class Core{
     protected $certless = false;
     protected $delay = 3;
     protected $toJson = false;
-   
+
     public function __construct(
         protected $ip,
         protected $username,
         protected $password
-    ){
-      $this->connect($this->ip, $this->username, $this->password);
+    ) {
+        $this->connect($this->ip, $this->username, $this->password);
     }
-    protected function isIsterable($var){
+    protected function isIsterable($var)
+    {
         return $var !== null
-        && (is_array($var)
-        || $var instanceof \Traversable
-        || $var instanceof \Iterator
-        || $var instanceof \IteratorAggregate
-        );
-
+            && (is_array($var)
+                || $var instanceof \Traversable
+                || $var instanceof \Iterator
+                || $var instanceof \IteratorAggregate
+            );
     }
 
-    protected function debug($text){
-        if($this->debug){
+    protected function debug($text)
+    {
+        if ($this->debug) {
             throw new \Exception($text);
         }
     }
 
-    protected function encodedLength($length){
+    protected function encodedLength($length)
+    {
         if ($length < 0x80) {
             $length = chr($length);
         } elseif ($length < 0x4000) {
@@ -61,11 +65,11 @@ class Core{
     {
         for ($ATTEMPT = 1; $ATTEMPT <= $this->attempts; $ATTEMPT++) {
             $this->connected = false;
-            $PROTOCOL = ($this->ssl ? 'ssl://' : '' );
-            $CERTLESS = ($this->certless ? ':@SECLEVEL=0' : '' );
+            $PROTOCOL = ($this->ssl ? 'ssl://' : '');
+            $CERTLESS = ($this->certless ? ':@SECLEVEL=0' : '');
             $context = stream_context_create(array('ssl' => array('ciphers' => 'ADH:ALL' . $CERTLESS, 'verify_peer' => false, 'verify_peer_name' => false)));
             $this->debug('Connection attempt #' . $ATTEMPT . ' to ' . $PROTOCOL . $ip . ':' . $this->port . '...');
-            $this->socket = @stream_socket_client($PROTOCOL . $ip.':'. $this->port, $this->error_no, $this->error_str, $this->timeout, STREAM_CLIENT_CONNECT,$context);
+            $this->socket = @stream_socket_client($PROTOCOL . $ip . ':' . $this->port, $this->error_no, $this->error_str, $this->timeout, STREAM_CLIENT_CONNECT, $context);
             if ($this->socket) {
                 socket_set_timeout($this->socket, $this->timeout);
                 $this->write('/login', false);
@@ -110,8 +114,9 @@ class Core{
     }
 
 
-    protected function disconnected(){
-        if( is_resource($this->socket) ) {
+    protected function disconnected()
+    {
+        if (is_resource($this->socket)) {
             fclose($this->socket);
         }
         $this->connected = false;
@@ -123,11 +128,11 @@ class Core{
         if (!is_array($response)) {
             return [];
         }
-        
+
         $parsed = [];
         $current = [];
         $singleValue = null;
-        
+
         foreach ($response as $item) {
             if (in_array($item, ['!fatal', '!re', '!trap'])) {
                 if ($item === '!re') {
@@ -143,20 +148,20 @@ class Core{
                 if (preg_match_all('/[^=]+/i', $item, $matches)) {
                     $key = $matches[0][0];
                     $value = $matches[0][1] ?? '';
-        
+
                     if ($key === 'ret') {
                         $singleValue = $value;
                     }
-        
+
                     $current[$key] = $value;
                 }
             }
         }
-            if($this->toJson === true){
-                return json_encode($parsed, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE| JSON_PRETTY_PRINT);
-            }else{
-                return empty($parsed) && $singleValue !== null ? $singleValue : $parsed;
-            }
+        if ($this->toJson === true) {
+            return json_encode($parsed, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        } else {
+            return empty($parsed) && $singleValue !== null ? $singleValue : $parsed;
+        }
     }
 
     protected function parseResponse4Smarty($response)
@@ -166,11 +171,11 @@ class Core{
             $CURRENT     = null;
             $singlevalue = null;
             foreach ($response as $x) {
-                if (in_array($x, ['!fatal','!re','!trap'])) {
+                if (in_array($x, ['!fatal', '!re', '!trap'])) {
                     if ($x == '!re') {
-                        $CURRENT =& $PARSED[$x];
+                        $CURRENT = &$PARSED[$x];
                     } else {
-                        $CURRENT =& $PARSED[$x];
+                        $CURRENT = &$PARSED[$x];
                     }
                 } elseif ($x != '!done') {
                     $MATCHES = array();
@@ -306,9 +311,10 @@ class Core{
             return false;
         }
     }
-  
 
-    public static function config($ip, $username, $password){
+
+    public static function config($ip, $username, $password)
+    {
         return new static($ip, $username, $password);
     }
 
@@ -319,12 +325,12 @@ class Core{
         $i = 0;
         if ($this->isIsterable($arr)) {
             foreach ($arr as $k => $v) {
-                $el = match($k[0]) {
+                $el = match ($k[0]) {
                     "?" => "$k=$v",
                     "~" => "$k~$v",
                     default => "=$k=$v"
                 };
-            
+
                 $last = $i++ == $count - 1;
                 $this->write($el, $last);
             }
@@ -343,32 +349,43 @@ class Core{
         $this->disconnected();
     }
 
-    public function setDebug($debug = false){
+    public function setDebug($debug = false)
+    {
         $this->debug = $debug;
         return $this;
     }
 
-    public function query(string $query){
-        if($this->connected){
-           return $this->comm($query);
+    public function query(string $query)
+    {
+        if ($this->connected) {
+            return $this->comm($query);
         }
     }
 
-    public function where(string $query, array $params){
-        if($this->connected){
+    public function where(string $query, array $params)
+    {
+        if ($this->connected) {
             return $this->comm($query, $params);
         }
     }
 
-    public function getById(string $query, string $id){
-        if($this->connected){
+    public function getById(string $query, string $id)
+    {
+        if ($this->connected) {
             return $this->comm($query, ["?.id" => $id]);
         }
     }
 
-    public function toJson($status = true){
+    public function toJson($status = true)
+    {
         $this->toJson = $status;
         return $this;
     }
-   
+
+    public function setPort($port): self
+    {
+        $this->port = $port;
+
+        return $this;
+    }
 }
