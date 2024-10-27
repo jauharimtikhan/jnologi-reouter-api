@@ -41,6 +41,8 @@ use Jnologi\RouterApi\Core;
 
 $api = Core::config('{ip_router}', '{username}', '{password}');
 
+$api->setPort('{set_port_mikrotik}') //by default is 8728
+
 $response = $api->query('/interface/print');
 print_r($response);
 
@@ -66,11 +68,11 @@ print_r($response);
 
 ### Methods Overview
 
-- `getById($host, $username, $password, $port = 8728)`  
+- `getById($host, $username, $password)`  
   Connect to the Mikrotik RouterOS device.
-- `query($command, $paramType = true)`  
+- `query($command)`  
   Send a command to the router. Use `false` for sending multiple parts of the same command.
-- `where()`  
+- `where($comand, ...$params)`  
   Read the response from RouterOS.
 - `disconnect()`  
   Terminate the connection with the RouterOS API.
@@ -84,6 +86,8 @@ print_r($response);
 
 - `/ip/address/remove`  
   Remove an IP address from the router.
+
+  <a href="command.md" >More Commands Here</a>
 
 ### Example Usage
 
