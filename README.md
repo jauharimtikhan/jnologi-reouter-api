@@ -1,60 +1,60 @@
-<h1 align="center">Mikrotik PHP API Package</h1>
+<h1 align="center">Paket API PHP Mikrotik</h1>
 
 ![Mikrotik API](https://img.shields.io/badge/Mikrotik-RouterOS-blue) ![PHP](https://img.shields.io/badge/PHP-%3E%3D%208.2-orange) ![License](https://img.shields.io/badge/License-MIT-green)
 
-## 🚀 Introduction
+## 🚀 Pengantar
 
-The **Mikrotik PHP API** package provides a convenient and easy-to-use interface to communicate with your MikroTik RouterOS device using PHP. This package is designed to simplify the process of automating your Mikrotik router, including managing interfaces, configuring IPs, monitoring traffic, and more.
+Paket **Mikrotik PHP API** ini bikin koneksi ke perangkat MikroTik RouterOS jadi lebih gampang pakai PHP. Paket ini dibuat buat bantu nge-otomatisasi router Mikrotik, kayak ngatur antarmuka, konfigurasi IP, cek lalu lintas jaringan, dan lainnya.
 
-Whether you're building network monitoring tools or automating network configuration, this package helps you interact with MikroTik API programmatically.
+Cocok banget buat yang mau bikin alat monitoring jaringan atau otomatisasi konfigurasi, paket ini bisa bantu buat interaksi ke API MikroTik lebih simpel.
 
-## ✨ Features
+## ✨ Fitur
 
-- 📡 **Easy RouterOS API Integration**: Simple API wrapper to interact with RouterOS.
-- 🛠️ **Manage Configuration**: Create, modify, and delete Mikrotik configurations (IP, firewall, interfaces, etc.).
-- 📊 **Monitor and Analyze Traffic**: Retrieve real-time data such as traffic stats, resource usage, and more.
-- 🔐 **Secure Connection**: Secure communication with the router using Mikrotik API.
-- ⚡ **Fast and Lightweight**: Efficient data exchange with minimal overhead.
+- 📡 **Integrasi API RouterOS Simpel**: Pembungkus API buat interaksi sama RouterOS jadi gampang.
+- 🛠️ **Ngatur Konfigurasi**: Bisa bikin, edit, dan hapus konfigurasi Mikrotik (IP, firewall, antarmuka, dll.).
+- 📊 **Pantau dan Analisa Lalu Lintas**: Dapetin data real-time kayak statistik lalu lintas, pemakaian resource, dan lainnya.
+- 🔐 **Koneksi Aman**: Komunikasi aman ke router pakai API Mikrotik.
+- ⚡ **Cepet dan Ringan**: Tukar data efisien dengan overhead minimal.
 
-## 🛠️ Installation
+## 🛠️ Instalasi
 
-Install the package via Composer:
+Install paket lewat Composer:
 
 ```bash
 composer require jauhar/router-api
 ```
 
-Alternatively, download the package and include the class manually.
+Atau, download aja paketnya dan masukin kelasnya secara manual.
 
-## 🚀 Quick Start
+## 🚀 Langsung Coba
 
-### 1. **Establishing Connection**
+### 1. **Bikin Koneksi**
 
-To begin, you'll need to establish a connection to your Mikrotik RouterOS device using the API Or ResFullAPI.
+Pertama, bikin koneksi ke perangkat Mikrotik RouterOS pakai API atau RestFullAPI.
 
 ```php
 <?php
 
-require('vendor/autoload.php'); // Include via Composer
+require('vendor/autoload.php'); // Include lewat Composer
 
 use Jnologi\RouterApi\Core;
 use Jnologi\RouterApi\RestApi;
 
 $api = Core::config('{ip_router}', '{username}', '{password}');
 
-$api->setPort('{set_port_mikrotik}') //by default is 8728
+$api->setPort('{set_port_mikrotik}') // default-nya 8728
 
 $response = $api->query('/interface/print');
 print_r($response);
 
-//  Method By RestFullAPI
-$rest = RestApi::config('{ip_router}', '{username}', '{password}');
-$rest->setPort('{your_mikrotik_port}') // By Default Is 80
+//  Metode pakai RestFullAPI
+$rest = RestApi::init('{ip_router}', '{username}', '{password}');
+$rest->setPort('{your_mikrotik_port}') // Defaultnya 80
 
-$resultApi = $rest->get('{url}') // Using Method GET
-$resultApi = $rest->add('{url}', $data) // Using Method PUT
-$resultApi = $rest->update('{url}', $data) // Using Method PATCH
-$resultApi = $rest->delete('{url}') // Using Method DELETE
+$resultApi = $rest->get('{url}') // Metode GET
+$resultApi = $rest->add('{url}', $data) // Metode PUT
+$resultApi = $rest->update('{url}', $data) // Metode PATCH
+$resultApi = $rest->delete('{url}') // Metode DELETE
 
 echo "<pre>";
 print_r($resultApi);
@@ -62,9 +62,9 @@ echo "</pre>";
 ?>
 ```
 
-### 2. **Retrieving Interface Information By Parameter**
+### 2. **Ambil Info Antarmuka Pakai Parameter**
 
-Retrieve a list of all interfaces from the router with query parameter :
+Ambil daftar semua antarmuka dari router dengan parameter query:
 
 ```php
 <?php
@@ -77,34 +77,34 @@ print_r($response);
 ?>
 ```
 
-## 📚 API Reference
+## 📚 Referensi API
 
-### Methods Overview
+### Tinjauan Metode
 
 - `getById($host, $username, $password)`  
-  Connect to the Mikrotik RouterOS device.
+  Buat koneksi ke perangkat Mikrotik RouterOS.
 - `query($command)`  
-  Send a command to the router. Use `false` for sending multiple parts of the same command.
-- `where($comand, ...$params)`  
-  Read the response from RouterOS.
+  Kirim perintah ke router. Pakai `false` buat kirim beberapa bagian dari perintah yang sama.
+- `where($command, ...$params)`  
+  Baca respons dari RouterOS.
 - `disconnect()`  
-  Terminate the connection with the RouterOS API.
+  Tutup koneksi sama API RouterOS.
 
-### Common Commands
+### Perintah Umum
 
 - `/interface/print`  
-  Retrieve the list of interfaces.
+  Ambil daftar antarmuka.
 - `/ip/address/add`  
-  Add a new IP address to an interface.
+  Tambahin alamat IP baru ke antarmuka.
 
 - `/ip/address/remove`  
-  Remove an IP address from the router.
+  Hapus alamat IP dari router.
 
-  <a href="command.md" >More Commands Here</a>
+  <a href="command.md" >Lihat Perintah Lainnya di Sini</a>
 
-### Example Usage
+### Contoh Penggunaan
 
-- **Get traffic stats**:
+- **Ambil statistik lalu lintas**:
 
   ```php
   $api->where('/interface/monitor-traffic', [
@@ -113,41 +113,41 @@ print_r($response);
   ]);
   ```
 
-## 🛡️ Security
+## 🛡️ Keamanan
 
-Ensure that the Mikrotik API service is securely enabled and that your API connection is not exposed to public networks. It is recommended to use **SSH** or a VPN when working with the API.
+Pastikan layanan API Mikrotik diaktifin dengan aman dan koneksi API-nya nggak kebuka ke jaringan publik. Disarankan pakai **SSH** atau VPN kalau kerja pakai API.
 
 ## 🧪 Testing
 
-You can test the API using a local development environment or any PHP web server. Make sure that you have:
+API bisa dites pakai lingkungan pengembangan lokal atau server web PHP. Pastikan udah:
 
-- Enabled the Mikrotik API service on your router.
-- Correct firewall rules to allow access to the API port.
+- Aktifin layanan API Mikrotik di router.
+- Aturan firewall yang bener buat ngizinin akses ke port API.
 
-## 🤝 Contributing
+## 🤝 Kontribusi
 
-Contributions are welcome! Please feel free to submit a pull request or open an issue for any bugs or features.
+Kontribusi dibuka lebar! Jangan sungkan buat kirim pull request atau buka masalah buat bug atau fitur baru.
 
-1. Fork the repository.
-2. Create a new branch for your feature or fix.
-3. Submit a pull request and describe the changes.
+1. Fork repo-nya.
+2. Bikin cabang baru buat fitur atau perbaikan.
+3. Kirim pull request dan jelasin perubahannya.
 
-## 📄 License
+## 📄 Lisensi
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
----
-
-## 💡 Need Help?
-
-If you encounter any issues, feel free to reach out by creating an issue on the GitHub repository or by visiting [Mikrotik Forums](https://forum.mikrotik.com/).
+Proyek ini dilisensikan di bawah Lisensi MIT. Lihat file [LICENSE](LICENSE) buat detail.
 
 ---
 
-### Made with ❤️ by Jauhar Imtikhan
+## 💡 Butuh Bantuan?
+
+Kalau ada masalah, jangan ragu buat kontak dengan bikin isu di repo GitHub atau mampir ke [Forum Mikrotik](https://forum.mikrotik.com/).
 
 ---
 
-Enjoy building your network automation tools with Mikrotik PHP API!
+### Dibuat dengan ❤️ oleh Jauhar Imtikhan
+
+---
+
+Selamat membangun alat otomasi jaringan kamu pakai Mikrotik PHP API!
 
 ---
