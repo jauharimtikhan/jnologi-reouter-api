@@ -8,8 +8,9 @@ use GuzzleHttp\Client;
 class RestApi
 {
 
-    protected int $port = 8728;
+    protected int $port = 80;
     protected bool $isHttps = false;
+
 
     public function __construct(
         protected $ip,

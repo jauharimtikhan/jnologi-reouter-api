@@ -30,7 +30,7 @@ Alternatively, download the package and include the class manually.
 
 ### 1. **Establishing Connection**
 
-To begin, you'll need to establish a connection to your Mikrotik RouterOS device using the API.
+To begin, you'll need to establish a connection to your Mikrotik RouterOS device using the API Or ResFullAPI.
 
 ```php
 <?php
@@ -38,6 +38,7 @@ To begin, you'll need to establish a connection to your Mikrotik RouterOS device
 require('vendor/autoload.php'); // Include via Composer
 
 use Jnologi\RouterApi\Core;
+use Jnologi\RouterApi\RestApi;
 
 $api = Core::config('{ip_router}', '{username}', '{password}');
 
@@ -46,6 +47,18 @@ $api->setPort('{set_port_mikrotik}') //by default is 8728
 $response = $api->query('/interface/print');
 print_r($response);
 
+//  Method By RestFullAPI
+$rest = RestApi::config('{ip_router}', '{username}', '{password}');
+$rest->setPort('{your_mikrotik_port}') // By Default Is 80
+
+$resultApi = $rest->get('{url}') // Using Method GET
+$resultApi = $rest->add('{url}', $data) // Using Method PUT
+$resultApi = $rest->update('{url}', $data) // Using Method PATCH
+$resultApi = $rest->delete('{url}') // Using Method DELETE
+
+echo "<pre>";
+print_r($resultApi);
+echo "</pre>";
 ?>
 ```
 
