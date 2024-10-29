@@ -11,6 +11,8 @@ class RestApi
     protected int $port = 80;
     protected bool $isHttps = false;
 
+    protected bool $toJson = false;
+
 
     public function __construct(
         protected $ip,
@@ -54,7 +56,7 @@ class RestApi
                     'Content-Type' => 'application/json'
                 ]
             ]);
-            $results = $response->getBody()->getContents();
+            $this->toJson ? $results = $response->getBody()->getContents() : $result = json_decode($response->getBody()->getContents(), true);
         } catch (\GuzzleHttp\Exception\ClientException $e) {
             return $e->getMessage();
         }
@@ -79,7 +81,7 @@ class RestApi
                 ],
                 'body' => json_encode($data)
             ]);
-            $results = $response->getBody()->getContents();
+            $this->toJson ? $results = $response->getBody()->getContents() : $result = json_decode($response->getBody()->getContents(), true);
         } catch (\GuzzleHttp\Exception\ClientException $e) {
             return $e->getMessage();
         }
@@ -104,7 +106,7 @@ class RestApi
                 ],
                 'body' => json_encode($data)
             ]);
-            $results = $response->getBody()->getContents();
+            $this->toJson ? $results = $response->getBody()->getContents() : $result = json_decode($response->getBody()->getContents(), true);
         } catch (\GuzzleHttp\Exception\ClientException $e) {
             return $e->getMessage();
         }
@@ -128,10 +130,16 @@ class RestApi
                     'Content-Type' => 'application/json'
                 ]
             ]);
-            $results = $response->getBody()->getContents();
+            $this->toJson ? $results = $response->getBody()->getContents() : $result = json_decode($response->getBody()->getContents(), true);
         } catch (\GuzzleHttp\Exception\ClientException $e) {
             return $e->getMessage();
         }
         return $results;
+    }
+
+    public function toJson($status = true)
+    {
+        $this->toJson = $status;
+        return $this;
     }
 }
