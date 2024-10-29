@@ -56,11 +56,10 @@ class RestApi
                     'Content-Type' => 'application/json'
                 ]
             ]);
-            $this->toJson ? $results = $response->getBody()->getContents() : $result = json_decode($response->getBody()->getContents(), true);
+            return $this->toJson ? $response->getBody()->getContents() : json_decode($response->getBody()->getContents(), true);
         } catch (\GuzzleHttp\Exception\ClientException $e) {
             return $e->getMessage();
         }
-        return $results;
     }
 
     public function add($query, $data)
@@ -81,11 +80,10 @@ class RestApi
                 ],
                 'body' => json_encode($data)
             ]);
-            $this->toJson ? $results = $response->getBody()->getContents() : $result = json_decode($response->getBody()->getContents(), true);
+            return $this->toJson ? $response->getBody()->getContents() : json_decode($response->getBody()->getContents(), true);
         } catch (\GuzzleHttp\Exception\ClientException $e) {
             return $e->getMessage();
         }
-        return $results;
     }
 
     public function update($query, $data)
@@ -106,11 +104,10 @@ class RestApi
                 ],
                 'body' => json_encode($data)
             ]);
-            $this->toJson ? $results = $response->getBody()->getContents() : $result = json_decode($response->getBody()->getContents(), true);
+            return $this->toJson ? $response->getBody()->getContents() : json_decode($response->getBody()->getContents(), true);
         } catch (\GuzzleHttp\Exception\ClientException $e) {
             return $e->getMessage();
         }
-        return $results;
     }
 
     public function delete($query)
@@ -130,11 +127,10 @@ class RestApi
                     'Content-Type' => 'application/json'
                 ]
             ]);
-            $this->toJson ? $results = $response->getBody()->getContents() : $result = json_decode($response->getBody()->getContents(), true);
+            return $this->toJson ? $response->getBody()->getContents() : json_decode($response->getBody()->getContents(), true);
         } catch (\GuzzleHttp\Exception\ClientException $e) {
             return $e->getMessage();
         }
-        return $results;
     }
 
     public function toJson($status = true)
