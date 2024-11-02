@@ -4,19 +4,26 @@ namespace Jnologi\RouterApi;
 
 class Core
 {
-    protected $debug = false;
-    protected $connected = false;
-    protected $timeout = 20;
-    protected $attempts = 5;
-    protected $socket;
-    protected $error_no;
-    protected $error_str;
-    protected $ssl = false;
-    protected $port = 8728;
-    protected $certless = false;
-    protected $delay = 3;
-    protected $toJson = false;
+    protected ?bool $debug = false;
+    protected bool $connected = false;
+    protected int $timeout = 20;
+    protected int $attempts = 5;
+    protected mixed $socket;
+    protected mixed $error_no;
+    protected ?string $error_str;
+    protected bool $ssl = false;
+    protected int $port = 8728;
+    protected bool $certless = false;
+    protected int $delay = 3;
+    protected bool $toJson = false;
 
+    /**
+     * Membuat instance dari class Core.
+     *
+     * @param string $ip IP Address router
+     * @param string $username Username untuk login
+     * @param string|null $password Password untuk login
+     */
     public function __construct(
         protected $ip,
         protected $username,
@@ -24,7 +31,14 @@ class Core
     ) {
         $this->connect($this->ip, $this->username, $this->password);
     }
-    protected function isIsterable($var)
+    /**
+     * Mengecek apakah suatu variabel dapat di iterasi atau tidak.
+     *
+     * @param mixed $var Variabel yang akan di cek
+     *
+     * @return bool
+     */
+    protected function isIsterable(mixed $var)
     {
         return $var !== null
             && (is_array($var)
@@ -34,6 +48,13 @@ class Core
             );
     }
 
+    /**
+     * Menampilkan debug jika error terjadi.
+     *
+     * @param string $text teks yang akan di tampilkan
+     *
+     * @throws \Exception
+     */
     protected function debug($text)
     {
         if ($this->debug) {
@@ -41,7 +62,14 @@ class Core
         }
     }
 
-    protected function encodedLength($length)
+    /**
+     * Mengkodekan panjang data ke dalam format yang sesuai untuk dikirimkan ke Mikrotik.
+     *
+     * @param int $length panjang data yang akan dikodekan
+     *
+     * @return string|null
+     */
+    protected function encodedLength(int $length)
     {
         if ($length < 0x80) {
             $length = chr($length);
@@ -61,7 +89,16 @@ class Core
         return $length ?? null;
     }
 
-    protected function connect($ip, $username, $password)
+    /**
+     * Melakukan koneksi ke Mikrotik Router melalui socket.
+     *
+     * @param string $ip alamat IP router
+     * @param string $username username yang digunakan untuk login ke router
+     * @param string $password password yang digunakan untuk login ke router
+     *
+     * @return bool status koneksi
+     */
+    protected function connect(string $ip, string $username, string $password)
     {
         for ($ATTEMPT = 1; $ATTEMPT <= $this->attempts; $ATTEMPT++) {
             $this->connected = false;
@@ -114,6 +151,13 @@ class Core
     }
 
 
+    /**
+     * Memutuskan koneksi API.
+     *
+     * Memutuskan koneksi API yang aktif dan menutup sumber daya socket.
+     *
+     * @return void
+     */
     protected function disconnected()
     {
         if (is_resource($this->socket)) {
@@ -123,7 +167,18 @@ class Core
         $this->debug('Disconnected...');
     }
 
-    protected function parseResponse($response)
+    /**
+     * Mengurai respon dari API RouterOS menjadi array.
+     *
+     * Metode ini mengurai respon dari API RouterOS menjadi array yang dapat
+     * digunakan lebih lanjut. Jika respon tidak ada (kosong), maka metode ini
+     * akan mengembalikan array kosong.
+     *
+     * @param array $response Respon dari API RouterOS.
+     *
+     * @return array|mixed Respon yang sudah diurai.
+     */
+    protected function parseResponse(array $response): mixed
     {
         if (!is_array($response)) {
             return [];
@@ -164,7 +219,15 @@ class Core
         }
     }
 
-    protected function parseResponse4Smarty($response)
+    /**
+     * Parse response API untuk Smarty.
+     *
+     * @param array $response Hasil response API.
+     *
+     * @return array Hasil parsing.
+     * 
+     */
+    protected function parseResponse4Smarty(array $response)
     {
         if (is_array($response)) {
             $PARSED      = [];
@@ -195,11 +258,18 @@ class Core
                 $PARSED = $singlevalue;
             }
         } else {
-            return array();
+            return [];
         }
     }
 
-    protected function arrayChangeKeyName(&$array)
+    /**
+     * Mengubah nama key array dari yang menggunakan tanda pisah (-) atau tanda garis miring (/) menjadi menggunakan tanda underscore (_)
+     *
+     * @param array $array array yang akan di ubah
+     *
+     * @return array array yang sudah di ubah
+     */
+    protected function arrayChangeKeyName(array &$array)
     {
         if (is_array($array)) {
             foreach ($array as $k => $v) {
@@ -217,7 +287,14 @@ class Core
         }
     }
 
-    protected function read($parse = true)
+    /**
+     * Membaca respon dari router Mikrotik dan mengembalikan respon yang telah di parsing
+     *
+     * @param boolean $parse apakah respon akan di parsing atau tidak
+     *
+     * @return array respon yang telah di parsing
+     */
+    protected function read(bool $parse = true)
     {
         $RESPONSE     = [];
         $receiveddone = false;
@@ -286,7 +363,15 @@ class Core
         return $RESPONSE;
     }
 
-    protected function write($command, $param2 = true)
+    /**
+     * Menulis perintah ke socket API.
+     *
+     * @param string $command perintah yang akan ditulis.
+     * @param mixed $param2 parameter opsional, berupa integer untuk mengirimkan tag, boolean untuk mengirimkan null, atau tidak ada parameter untuk menulis perintah secara normal.
+     *
+     * @return bool status penulisan perintah.
+     */
+    protected function write(string $command, mixed $param2 = true)
     {
         if ($command) {
             $data = explode("\n", $command);
@@ -313,11 +398,28 @@ class Core
     }
 
 
-    public static function config($ip, $username, $password)
+    /**
+     * Membuat instance baru dari Core dengan konfigurasi yang diberikan.
+     *
+     * @param string $ip alamat IP dari router.
+     * @param string $username nama pengguna untuk login.
+     * @param string $password kata sandi untuk login.
+     *
+     * @return static instance baru dari Core.
+     */
+    public static function config(string $ip, string $username, string $password)
     {
         return new static($ip, $username, $password);
     }
 
+    /**
+     * Menulis perintah ke router dengan parameter query.
+     *
+     * @param string $com perintah yang akan dijalankan.
+     * @param array $arr parameter query yang akan dijalankan.
+     *
+     * @return array hasil dari perintah yang dijalankan.
+     */
     protected function comm(string $com, array $arr = [])
     {
         $count = count($arr);
@@ -349,40 +451,87 @@ class Core
         $this->disconnected();
     }
 
-    public function setDebug($debug = false)
+    /**
+     * Set debug mode for the API.
+     *
+     * @param bool $debug Set debug mode on or off.
+     *
+     * @return self
+     */
+    public function setDebug(bool $debug = false)
     {
         $this->debug = $debug;
         return $this;
     }
 
+    /**
+     * Mengirimkan perintah ke router dengan parameter query.
+     *
+     * @param string $query perintah yang akan dijalankan.
+     *
+     * @return array hasil dari perintah yang dijalankan.
+     */
     public function query(string $query)
     {
-        if ($this->connected) {
-            return $this->comm($query);
+
+        if (!$this->connected) {
+            return [];
         }
+        return $this->comm($query);
     }
 
+    /**
+     * Melakukan query ke router dengan parameter query dan parameter tambahan.
+     *
+     * @param string $query perintah yang akan dijalankan.
+     * @param array $params parameter tambahan yang akan dijalankan.
+     *
+     * @return array hasil dari perintah yang dijalankan.
+     */
     public function where(string $query, array $params)
     {
-        if ($this->connected) {
-            return $this->comm($query, $params);
+        if (!$this->connected) {
+            return [];
         }
+        return $this->comm($query, $params);
     }
 
+    /**
+     * Ambil data dari router dengan parameter query dan id.
+     *
+     * @param string $query perintah yang akan dijalankan.
+     * @param string $id id yang akan diambil.
+     *
+     * @return array hasil dari perintah yang dijalankan.
+     */
     public function getById(string $query, string $id)
     {
-        if ($this->connected) {
-            return $this->comm($query, ["?.id" => $id]);
+        if (!$this->connected) {
+            return [];
         }
+        return $this->comm($query, ["?.id" => $id]);
     }
 
-    public function toJson($status = true)
+    /**
+     * Set response ke JSON
+     *
+     * @param bool|null $status
+     * @return $this  
+     * 
+     */
+    public function toJson(?bool $status = true)
     {
         $this->toJson = $status;
         return $this;
     }
 
-    public function setPort($port): self
+    /**
+     * Mengatur port yang akan digunakan untuk koneksi ke router.
+     *
+     * @param int|null $port nilai port yang akan diatur. Defaultnya null.
+     * @return self
+     */
+    public function setPort(?int $port): self
     {
         $this->port = $port;
 
